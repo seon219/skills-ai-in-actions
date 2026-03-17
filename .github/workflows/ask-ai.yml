@@ -1,0 +1,28 @@
+# 워크플로 이름, 수동 이벤트 트리거 및 필요한 권한을 추가
+name: Ask AI
+on:
+  workflow_dispatch:
+
+permissions:
+  models: read
+
+# AI 추론 액션을 사용하는 작업을 추가
+# 이 간단한 시나리오에서는 AI에게 미리 정의된 간단한 질문을 하고 워크플로 요약에 응답을 표시
+jobs:
+  ask-ai:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: AI Inference
+        id: ai-response
+        uses: actions/ai-inference@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} 
+          prompt: |
+            Give me a programming joke.
+
+      - name: Display AI Response
+        run: |
+          echo "## 🤖 AI Response" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.ai-response.outputs.response }}" >> $GITHUB_STEP_SUMMARY
